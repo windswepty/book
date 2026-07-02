@@ -979,23 +979,68 @@ if (formChangePw) {
 }
 
 /* ==========================================
+   9-2. 비밀번호 재설정 이메일 발송
+   ========================================== */
+const formResetPw = document.getElementById("form-reset-pw");
+const resetPwResult = document.getElementById("reset-pw-result");
+const resetPwResultText = document.getElementById("reset-pw-result-text");
+
+if (formResetPw) {
+    formResetPw.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("reset-pw-email").value.trim();
+
+        try {
+            if (isOfflineMode) {
+                resetPwResultText.textContent = `${email} 주소로 재설정 링크가 발송되었습니다.`;
+                resetPwResult.classList.remove("hidden");
+                showToast("비밀번호 재설정 링크가 발송되었습니다.", "success");
+                return;
+            }
+
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.href
+            });
+            if (error) throw error;
+
+            resetPwResultText.textContent = `${email} 주소로 재설정 링크가 발송되었습니다. 메일함을 확인해주세요.`;
+            resetPwResult.classList.remove("hidden");
+            showToast("비밀번호 재설정 링크가 발송되었습니다.", "success");
+        } catch (error) {
+            showToast(error.message || "재설정 링크 발송에 실패했습니다.", "error");
+            resetPwResult.classList.add("hidden");
+        }
+    });
+}
+
+function clearResetPwForm() {
+    if (formResetPw) formResetPw.reset();
+    if (resetPwResult) resetPwResult.classList.add("hidden");
+    if (resetPwResultText) resetPwResultText.textContent = "";
+}
+
+/* ==========================================
    10. 모달 & 테마 토글 및 공통 인터랙션
    ========================================== */
 btnForgotPwGuide.addEventListener("click", () => {
     clearFindIdForm();
+    clearResetPwForm();
     modalGuide.classList.remove("hidden");
 });
 btnCloseModal.addEventListener("click", () => {
     clearFindIdForm();
+    clearResetPwForm();
     modalGuide.classList.add("hidden");
 });
 btnCloseModalConfirm.addEventListener("click", () => {
     clearFindIdForm();
+    clearResetPwForm();
     modalGuide.classList.add("hidden");
 });
 modalGuide.addEventListener("click", (e) => {
     if (e.target === modalGuide) {
         clearFindIdForm();
+        clearResetPwForm();
         modalGuide.classList.add("hidden");
     }
 });

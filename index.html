@@ -301,9 +301,16 @@
                             <span class="step-badge">!</span>
                             <div>
                                 <h4>비밀번호를 분실했나요?</h4>
-                                <p>가입 시 등록했던 이메일로 비밀번호 재설정 링크를 요청할 수 있습니다.</p>
-                                <div class="code-example">
-                                    <code>await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });</code>
+                                <p>가입 시 등록했던 이메일을 입력하면 비밀번호 재설정 링크를 보내드립니다.</p>
+                                <form id="form-reset-pw" class="find-id-form" style="margin-top: 0.75rem;">
+                                    <div class="input-wrapper">
+                                        <i data-lucide="mail" class="input-icon"></i>
+                                        <input type="email" id="reset-pw-email" required placeholder="가입한 이메일 주소 입력">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 0.75rem;">재설정 링크 발송</button>
+                                </form>
+                                <div id="reset-pw-result" class="find-id-result hidden" style="margin-top: 0.5rem;">
+                                    <span id="reset-pw-result-text"></span>
                                 </div>
                             </div>
                         </div>
@@ -354,6 +361,6 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- JS 연결 (defer 및 버저닝 추가로 캐싱 방지) -->
-    <script src="app.js?v=6" defer></script>
+    <script src="app.js?v=7" defer></script>
 </body>
 </html>
