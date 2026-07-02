@@ -163,8 +163,12 @@ if (formRegister) {
             showToast("비밀번호는 최소 6자리 이상이어야 합니다.", "error");
             return;
         }
+        if (!/^[a-zA-Z0-9]+$/.test(nickname)) {
+            showToast("아이디는 영문과 숫자 조합만 사용할 수 있습니다.", "error");
+            return;
+        }
         
-        // 닉네임 중복 사전 차단 검사 (Supabase API 500 가림 방지)
+        // 아이디 중복 사전 차단 검사 (Supabase API 500 가림 방지)
         if (!isOfflineMode && supabaseClient) {
             try {
                 const { data: existingProfiles, error: checkError } = await supabaseClient
@@ -175,7 +179,7 @@ if (formRegister) {
                 if (checkError) throw checkError;
                 
                 if (existingProfiles && existingProfiles.length > 0) {
-                    showToast("이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해 주세요.", "error");
+                    showToast("이미 사용 중인 아이디입니다. 다른 아이디를 선택해 주세요.", "error");
                     return;
                 }
             } catch (err) {
@@ -183,7 +187,7 @@ if (formRegister) {
             }
         } else if (isOfflineMode) {
             if (nickname === "도서관어드민" || nickname === "일반회원" || nickname === "성공적탈퇴") {
-                showToast("이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해 주세요.", "error");
+                showToast("이미 사용 중인 아이디입니다. 다른 아이디를 선택해 주세요.", "error");
                 return;
             }
         }
@@ -193,6 +197,7 @@ if (formRegister) {
                 email: email,
                 password: password,
                 options: { 
+                    emailRedirectTo: window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/verify.html'),
                     data: { 
                         nickname: nickname,
                         role: 'member'
@@ -235,11 +240,11 @@ if (formRegister) {
 if (formLogin) {
     formLogin.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const email = document.getElementById("login-email").value.trim();
+        const nickname = document.getElementById("login-nickname").value.trim();
         const password = document.getElementById("login-password").value;
         
         // 디버그 가상 로그인 매칭 (500 에러 우회 및 순수 프론트 테스트용)
-        if (email.includes("admin") && password === "password123") {
+        if (nickname.includes("admin") && password === "password123") {
             isOfflineMode = true;
             showToast("[디버그] 관리자 모드로 오프라인 로그인에 성공했습니다.", "success");
             handleAuthChange("SIGNED_IN", {
@@ -251,7 +256,7 @@ if (formLogin) {
             });
             formLogin.reset();
             return;
-        } else if (email.includes("member") && password === "password123") {
+        } else if (nickname.includes("member") && password === "password123") {
             isOfflineMode = true;
             showToast("[디버그] 일반 회원 모드로 오프라인 로그인에 성공했습니다.", "success");
             handleAuthChange("SIGNED_IN", {
@@ -266,15 +271,26 @@ if (formLogin) {
         }
         
         try {
-            const { error } = await supabaseClient.auth.signInWithPassword({
-                email: email,
+            // 1. 아이디(닉네임)로 전체 이메일 조회
+            const { data: userEmail, error: rpcError } = await supabaseClient
+                .rpc('get_full_email_by_nickname', { p_nickname: nickname });
+            
+            if (rpcError || !userEmail) {
+                showToast("해당 아이디를 찾을 수 없습니다.", "error");
+                return;
+            }
+
+            // 2. 조회된 이메일과 비밀번호로 로그인
+            const { error: authError } = await supabaseClient.auth.signInWithPassword({
+                email: userEmail,
                 password: password
             });
-            if (error) throw error;
+            if (authError) throw authError;
+
             showToast("로그인되었습니다.", "success");
             formLogin.reset();
         } catch (error) {
-            showToast(`로그인 실패: ${error.message}. 오프라인 테스트용 계정(member@library.com / password123)으로 접속해보세요!`, "error");
+            showToast("비밀번호가 틀렸습니다. 다시 시도해주세요!", "error");
         }
     });
 }
@@ -902,30 +918,41 @@ function clearFindIdForm() {
 if (formFindId) {
     formFindId.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const nickname = document.getElementById("find-nickname").value.trim();
+        const email = document.getElementById("find-email").value.trim();
+        const password = document.getElementById("find-password").value;
         
         try {
-            let emailResult = "";
+            let nicknameResult = "";
             
             if (isOfflineMode) {
-                if (nickname.includes("어드민") || nickname.includes("admin")) {
-                    emailResult = "ad***@library.com";
-                } else if (nickname.includes("회원") || nickname.includes("member")) {
-                    emailResult = "me****@library.com";
+                if (email.includes("admin") && password === "password123") {
+                    nicknameResult = "도서관어드민";
+                } else if (email.includes("member") && password === "password123") {
+                    nicknameResult = "일반회원";
                 } else {
-                    throw new Error("해당 닉네임으로 가입된 정보를 찾을 수 없습니다.");
+                    throw new Error("비밀번호가 틀렸거나 이메일이 존재하지 않습니다.");
                 }
             } else {
-                const { data, error } = await supabaseClient.rpc("get_email_by_nickname", { p_nickname: nickname });
-                if (error) throw error;
-                emailResult = data;
+                // 이메일과 비밀번호로 로그인 시도하여 안전하게 아이디 획득
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
+                }
+                
+                // 로그인 성공 시 닉네임 가져오고 즉시 로그아웃 처리
+                nicknameResult = data.user.user_metadata.nickname;
+                await supabaseClient.auth.signOut();
             }
             
-            resultEmailText.textContent = emailResult;
+            resultEmailText.textContent = nicknameResult;
             findIdResult.classList.remove("hidden");
             showToast("아이디 조회가 성공적으로 완료되었습니다.", "success");
         } catch (error) {
-            showToast(error.message || "이메일 조회 실패", "error");
+            showToast(error.message || "아이디 조회 실패", "error");
             findIdResult.classList.add("hidden");
             resultEmailText.textContent = "";
         }
@@ -981,69 +1008,26 @@ if (formChangePw) {
     });
 }
 
-/* ==========================================
-   9-2. 비밀번호 재설정 이메일 발송
-   ========================================== */
-const formResetPw = document.getElementById("form-reset-pw");
-const resetPwResult = document.getElementById("reset-pw-result");
-const resetPwResultText = document.getElementById("reset-pw-result-text");
 
-if (formResetPw) {
-    formResetPw.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("reset-pw-email").value.trim();
-
-        try {
-            if (isOfflineMode) {
-                resetPwResultText.textContent = `${email} 주소로 재설정 링크가 발송되었습니다.`;
-                resetPwResult.classList.remove("hidden");
-                showToast("비밀번호 재설정 링크가 발송되었습니다.", "success");
-                return;
-            }
-
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.href
-            });
-            if (error) throw error;
-
-            resetPwResultText.textContent = `${email} 주소로 재설정 링크가 발송되었습니다. 메일함을 확인해주세요.`;
-            resetPwResult.classList.remove("hidden");
-            showToast("비밀번호 재설정 링크가 발송되었습니다.", "success");
-        } catch (error) {
-            showToast(error.message || "재설정 링크 발송에 실패했습니다.", "error");
-            resetPwResult.classList.add("hidden");
-        }
-    });
-}
-
-function clearResetPwForm() {
-    if (formResetPw) formResetPw.reset();
-    if (resetPwResult) resetPwResult.classList.add("hidden");
-    if (resetPwResultText) resetPwResultText.textContent = "";
-}
 
 /* ==========================================
    10. 모달 & 테마 토글 및 공통 인터랙션
    ========================================== */
 btnForgotPwGuide.addEventListener("click", () => {
     clearFindIdForm();
-    clearResetPwForm();
     modalGuide.classList.remove("hidden");
 });
 btnCloseModal.addEventListener("click", () => {
     clearFindIdForm();
-    clearResetPwForm();
     modalGuide.classList.add("hidden");
 });
 btnCloseModalConfirm.addEventListener("click", () => {
     clearFindIdForm();
-    clearResetPwForm();
     modalGuide.classList.add("hidden");
 });
 modalGuide.addEventListener("click", (e) => {
     if (e.target === modalGuide) {
         clearFindIdForm();
-        clearResetPwForm();
         modalGuide.classList.add("hidden");
     }
 });
