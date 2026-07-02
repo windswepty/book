@@ -1,0 +1,1045 @@
+/* ==========================================
+   1. 디자인 시스템 & 변수 정의 (테마)
+   ========================================== */
+:root[data-theme="dark"] {
+    --bg-base: #0b0f19;
+    --bg-surface: rgba(22, 28, 45, 0.7);
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.15);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    --accent-color: #6366f1; /* Indigo */
+    --accent-hover: #4f46e5;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+    
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-focus-border: #6366f1;
+    --danger-color: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+    --success-color: #10b981;
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    
+    --glow-color-1: rgba(99, 102, 241, 0.12);
+    --glow-color-2: rgba(236, 72, 153, 0.1);
+}
+
+:root[data-theme="light"] {
+    --bg-base: #f8fafc;
+    --bg-surface: rgba(255, 255, 255, 0.75);
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(0, 0, 0, 0.06);
+    --border-hover: rgba(0, 0, 0, 0.12);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --accent-color: #4f46e5;
+    --accent-hover: #4338ca;
+    --accent-glow: rgba(79, 70, 229, 0.08);
+    
+    --input-bg: #ffffff;
+    --input-focus-border: #4f46e5;
+    --danger-color: #dc2626;
+    --danger-bg: rgba(220, 38, 38, 0.08);
+    --success-color: #059669;
+    --card-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.08);
+    
+    --glow-color-1: rgba(79, 70, 229, 0.05);
+    --glow-color-2: rgba(219, 39, 119, 0.04);
+}
+
+/* ==========================================
+   2. 전역 리셋 & 레이아웃 설정
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', 'Outfit', sans-serif;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 배경 그래디언트 데코 */
+.bg-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: -1;
+    pointer-events: none;
+}
+.bg-glow-1 {
+    top: -100px;
+    left: -100px;
+    background-color: var(--glow-color-1);
+}
+.bg-glow-2 {
+    bottom: -150px;
+    right: -100px;
+    background-color: var(--glow-color-2);
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ==========================================
+   3. 메인 헤더
+   ========================================== */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--accent-color);
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.logo-text span {
+    color: var(--accent-color);
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.user-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.35rem 0.35rem 0.35rem 1rem;
+    border-radius: 100px;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+}
+
+.welcome-msg {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.welcome-msg strong {
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   4. 카드 및 섹션 구조 (Glassmorphism)
+   ========================================== */
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+}
+
+.card {
+    width: 100%;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.auth-card {
+    max-width: 460px;
+}
+
+/* 웰컴/히어로 섹션 */
+.hero-section {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 24px;
+    background-color: var(--accent-glow);
+    margin-bottom: 1.5rem;
+}
+
+.hero-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--accent-color);
+}
+
+.hero-section h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+}
+
+.hero-desc {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+/* ==========================================
+   5. 양식 및 폼 입력 요소
+   ========================================== */
+.card-header {
+    margin-bottom: 2rem;
+}
+
+.card-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.card-header p {
+    color: var(--text-secondary);
+    font-size: 0.925rem;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--text-muted);
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ==========================================
+   6. 버튼 디자인
+   ========================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover {
+    border-color: var(--border-hover);
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.btn-danger-outline {
+    background-color: transparent;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.btn-danger-outline:hover {
+    background-color: var(--danger-bg);
+}
+
+.btn-secondary-sm {
+    padding: 0.45rem 0.875rem;
+    font-size: 0.8rem;
+    border-radius: 100px;
+    background-color: var(--input-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary-sm:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.link-btn:hover {
+    color: var(--accent-hover);
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+.icon-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.button-group-center {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.button-group-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+/* ==========================================
+   7. 대시보드 구조 (인증 완료 페이지)
+   ========================================== */
+#sec-dashboard {
+    max-width: 900px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.user-profile-badge {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.avatar-placeholder {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.badge {
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.dashboard-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dashboard-panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.75rem;
+}
+
+.dashboard-panel h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.panel-desc {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 확장 영역 플레이스홀더 디자인 */
+.placeholder-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 3rem 1.5rem;
+}
+
+.placeholder-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.placeholder-box p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    max-width: 240px;
+    line-height: 1.5;
+}
+
+.settings-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* ==========================================
+   8. 푸터 및 모달, 공통 유틸리티
+   ========================================== */
+.main-footer {
+    padding: 2rem 0;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+}
+
+.main-footer p {
+    font-size: 0.825rem;
+    color: var(--text-muted);
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(11, 15, 25, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.modal-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.guide-step {
+    display: flex;
+    gap: 1rem;
+}
+
+.step-badge {
+    background-color: var(--accent-glow);
+    color: var(--accent-color);
+    font-weight: 700;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.guide-step h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.guide-step p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.code-example {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.code-example code {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--accent-color);
+    word-break: break-all;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* 토스트 시스템 */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 2000;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    animation: slideIn 0.3s ease forwards;
+}
+
+.toast-success {
+    border-left: 4px solid var(--success-color);
+}
+
+.toast-error {
+    border-left: 4px solid var(--danger-color);
+}
+
+.toast-info {
+    border-left: 4px solid var(--accent-color);
+}
+
+/* 애니메이션 및 숨김 처리 유틸 */
+.hidden {
+    display: none !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* 테마 별 아이콘 토글 처리 */
+:root[data-theme="dark"] .sun-icon { display: block; }
+:root[data-theme="dark"] .moon-icon { display: none; }
+:root[data-theme="light"] .sun-icon { display: none; }
+:root[data-theme="light"] .moon-icon { display: block; }
+
+/* ==========================================
+   9. 도서대여 및 검색 시스템 추가 스타일
+   ========================================== */
+
+/* 도서 서비스 헤더 레이아웃 */
+.panel-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* 검색 바 스타일 */
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    color: var(--text-muted);
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.6rem 0.75rem 0.6rem 2.25rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.search-bar input:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 도서 목록 그리드 */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+
+.loading-spinner {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* 도서 개별 카드 */
+.book-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.book-cover {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: var(--input-bg);
+}
+
+.book-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.book-title {
+    font-size: 0.925rem;
+    font-weight: 700;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.book-author {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.book-stock {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.book-stock span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.book-stock.out-of-stock span {
+    color: var(--danger-color);
+}
+
+/* 대여 현황 테이블 스타일 */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.rentals-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: left;
+    margin-top: 0.75rem;
+}
+
+.rentals-table th, 
+.rentals-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.rentals-table th {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.rentals-table td {
+    color: var(--text-primary);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-rented {
+    background-color: rgba(99, 102, 241, 0.15);
+    color: var(--accent-color);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.status-returned {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-overdue {
+    background-color: var(--danger-bg);
+    color: var(--danger-color);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ==========================================
+   10. 실시간 동기화 및 어드민 패널 추가 스타일
+   ========================================== */
+
+/* 연체 배너 스타일 */
+.alert-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--danger-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.banner-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.35); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+}
+
+/* 어드민 패널 스타일 */
+.admin-panel {
+    margin-top: 2rem;
+    border-color: rgba(239, 68, 68, 0.25);
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+}
+
+.admin-panel h3 {
+    color: #ef4444;
+}
+
+.admin-panel .rentals-table th {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-panel .btn-return {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--danger-color);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.admin-panel .btn-return:hover:not(:disabled) {
+    background-color: var(--danger-color);
+    color: #ffffff;
+}
+
+/* ==========================================
+   11. 아이디 찾기 모달 추가 스타일
+   ========================================== */
+.find-id-box {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.find-id-box h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.find-id-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.find-id-result {
+    margin-top: 1.25rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--accent-glow);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.find-id-result strong {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: monospace;
+}
+
+.modal-divider {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 1.5rem 0;
+}
+
+/* ==========================================
+   12. 회원탈퇴 안전 모달 추가 스타일
+   ========================================== */
+.delete-warning-box {
+    background-color: var(--danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+
+.delete-warning-box strong {
+    color: #ef4444;
+}
+
+.delete-target-nickname-display {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.delete-target-nickname-display strong {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.delete-confirm-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.text-danger-light {
+    color: #fca5a5;
+}
+

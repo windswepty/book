@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibreFlow - 모던 도서대여 서비스</title>
+    <meta name="description" content="Supabase Auth로 구현된 모던 도서대여 회원 관리 시스템">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons (아이콘 리소스) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 배경 글로우 데코레이션 -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- 헤더 영역 -->
+        <header class="main-header">
+            <div class="logo-area" id="btn-logo-home">
+                <i data-lucide="book-open" class="logo-icon"></i>
+                <span class="logo-text">Libre<span>Flow</span></span>
+            </div>
+            
+            <div class="nav-controls">
+                <!-- 테마 전환 버튼 -->
+                <button id="theme-toggle" class="icon-btn" aria-label="테마 전환">
+                    <i data-lucide="sun" class="sun-icon"></i>
+                    <i data-lucide="moon" class="moon-icon"></i>
+                </button>
+                
+                <!-- 세션 상태 및 헤더 로그아웃 -->
+                <div id="user-status-bar" class="user-status-bar hidden">
+                    <span class="welcome-msg"><strong id="header-username">사용자</strong>님</span>
+                    <button id="btn-logout-header" class="btn btn-secondary-sm">로그아웃</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            
+            <!-- 1. 메인 시작(Welcome) 섹션 -->
+            <section id="sec-welcome" class="card fade-in">
+                <div class="hero-section">
+                    <div class="icon-badge">
+                        <i data-lucide="library" class="hero-icon"></i>
+                    </div>
+                    <h1>지식의 흐름을 한곳에서</h1>
+                    <p class="hero-desc">LibreFlow는 독서를 사랑하는 이들을 위한 프리미엄 도서대여 플랫폼입니다. 지금 바로 가입하고 수천 권의 도서를 손쉽게 탐색하세요.</p>
+                    <div class="button-group-center">
+                        <button class="btn btn-primary navigate-btn" data-target="sec-login">로그인</button>
+                        <button class="btn btn-outline navigate-btn" data-target="sec-register">시작하기</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 로그인 섹션 -->
+            <section id="sec-login" class="card auth-card fade-in hidden">
+                <div class="card-header">
+                    <h2>로그인</h2>
+                    <p>등록한 이메일과 비밀번호를 입력해주세요.</p>
+                </div>
+                <form id="form-login" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">이메일 주소</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="login-email" required placeholder="example@domain.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">비밀번호</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="login-password" required placeholder="비밀번호 입력">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">로그인</button>
+                </form>
+                <div class="card-footer">
+                    <p>계정이 없으신가요? <button class="link-btn navigate-btn" data-target="sec-register">회원가입</button></p>
+                    <p>비밀번호를 분실했나요? <button class="link-btn" id="btn-forgot-pw-guide">비밀번호 재설정 가이드</button></p>
+                </div>
+            </section>
+
+            <!-- 3. 회원가입 섹션 -->
+            <section id="sec-register" class="card auth-card fade-in hidden">
+                <div class="card-header">
+                    <h2>회원가입</h2>
+                    <p>새로운 계정을 생성하고 LibreFlow를 이용해보세요.</p>
+                </div>
+                <form id="form-register" class="auth-form">
+                    <div class="form-group">
+                        <label for="reg-nickname">닉네임</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="reg-nickname" required placeholder="닉네임 입력">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">이메일 주소</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="reg-email" required placeholder="example@domain.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">비밀번호</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="reg-password" required placeholder="최소 6자리 이상">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password-confirm">비밀번호 확인</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="shield-check" class="input-icon"></i>
+                            <input type="password" id="reg-password-confirm" required placeholder="비밀번호 다시 입력">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">회원가입 신청</button>
+                </form>
+                <div class="card-footer">
+                    <p>이미 계정이 있으신가요? <button class="link-btn navigate-btn" data-target="sec-login">로그인</button></p>
+                </div>
+            </section>
+
+            <!-- 4. 로그인 완료 후 대시보드 홈 -->
+            <section id="sec-dashboard" class="card fade-in hidden">
+                <!-- 연체 경고 배너 -->
+                <div id="overdue-banner" class="alert-banner hidden">
+                    <i data-lucide="alert-triangle" class="banner-icon"></i>
+                    <span>반납 기한이 초과된 연체 도서가 있습니다! 신속히 반납해 주세요. 추가 대여가 제한됩니다.</span>
+                </div>
+
+                <div class="dashboard-header">
+                    <div class="user-profile-badge">
+                        <div class="avatar-placeholder" id="dashboard-avatar">LF</div>
+                        <div>
+                            <h2 id="dashboard-username">사용자 님</h2>
+                            <p id="dashboard-email" class="text-muted">user@example.com</p>
+                        </div>
+                    </div>
+                    <div class="status-tags">
+                        <span class="badge badge-success" id="user-role-badge">Library Member</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-content-grid">
+                    <!-- 도서 대여 및 검색 서비스 패널 (Phase 2 실구현) -->
+                    <div class="dashboard-panel book-service-panel">
+                        <div class="panel-header-row">
+                            <h3><i data-lucide="library" class="panel-icon text-primary"></i> 도서 대여 및 검색</h3>
+                            <!-- 검색 바 -->
+                            <div class="search-bar">
+                                <i data-lucide="search" class="search-icon"></i>
+                                <input type="text" id="input-book-search" placeholder="도서 제목 또는 저자 검색...">
+                            </div>
+                        </div>
+                        
+                        <!-- 도서 그리드 목록 -->
+                        <div class="book-grid" id="book-list-container">
+                            <!-- JS를 통해 동적 생성됨 -->
+                            <div class="loading-spinner">도서 목록을 불러오는 중...</div>
+                        </div>
+                    </div>
+
+                    <!-- 내 대여 현황 패널 -->
+                    <div class="dashboard-panel user-rentals-panel">
+                        <h3><i data-lucide="clock" class="panel-icon text-primary"></i> 내 대여 현황</h3>
+                        <p class="panel-desc">대여 중인 도서 목록과 반납 예정일을 관리합니다.</p>
+                        <div class="table-responsive">
+                            <table class="rentals-table">
+                               <thead>
+                                   <tr>
+                                       <th>도서명</th>
+                                       <th>대여일</th>
+                                       <th>반납예정일</th>
+                                       <th>상태</th>
+                                       <th>작업</th>
+                                   </tr>
+                               </thead>
+                               <tbody id="rental-list-container">
+                                   <!-- JS를 통해 동적 생성됨 -->
+                                   <tr>
+                                       <td colspan="5" class="text-center text-muted">대여 중인 도서가 없습니다.</td>
+                                   </tr>
+                               </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 회원 관리 설정 패널 -->
+                    <div class="dashboard-panel user-settings-panel">
+                        <h3><i data-lucide="settings" class="panel-icon text-primary"></i> 내 정보 및 보안 설정</h3>
+                        <div class="settings-actions">
+                            <button id="btn-show-change-pw" class="btn btn-outline btn-block">
+                                <i data-lucide="key-round"></i> 비밀번호 변경하기
+                            </button>
+                            <button id="btn-delete-account" class="btn btn-danger-outline btn-block">
+                                <i data-lucide="user-x"></i> 회원 탈퇴하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 관리자 패널 -->
+                <div id="panel-admin" class="dashboard-panel admin-panel hidden">
+                    <h3><i data-lucide="shield-alert" class="panel-icon text-primary"></i> 도서관 관리자 패널 (전체 대여 모니터링)</h3>
+                    <p class="panel-desc">시스템 내 모든 대여 현황을 파악하고 강제 반납 처리를 제어합니다.</p>
+                    <div class="table-responsive">
+                        <table class="rentals-table">
+                           <thead>
+                               <tr>
+                                   <th>대여자(이메일)</th>
+                                   <th>도서명</th>
+                                   <th>대여일</th>
+                                   <th>반납예정일</th>
+                                   <th>상태</th>
+                                   <th>작업</th>
+                               </tr>
+                           </thead>
+                           <tbody id="admin-rental-list-container">
+                               <tr>
+                                   <td colspan="6" class="text-center text-muted">대여 내역이 없습니다.</td>
+                               </tr>
+                           </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 비밀번호 변경 섹션 -->
+            <section id="sec-change-password" class="card auth-card fade-in hidden">
+                <div class="card-header">
+                    <h2>비밀번호 변경</h2>
+                    <p>보안을 위해 새로운 비밀번호를 설정해주세요.</p>
+                </div>
+                <form id="form-change-pw" class="auth-form">
+                    <div class="form-group">
+                        <label for="change-password">새 비밀번호</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="change-password" required placeholder="최소 6자리 이상">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="change-password-confirm">새 비밀번호 확인</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="shield-check" class="input-icon"></i>
+                            <input type="password" id="change-password-confirm" required placeholder="비밀번호 다시 입력">
+                        </div>
+                    </div>
+                    <div class="button-group-row">
+                        <button type="button" class="btn btn-outline navigate-btn" data-target="sec-dashboard">취소</button>
+                        <button type="submit" class="btn btn-primary">비밀번호 업데이트</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 6. 비밀번호 재설정 & 이메일 찾기 안내 모달 -->
+            <div id="modal-guide" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h3>계정 찾기 및 안내</h3>
+                        <button id="btn-close-modal" class="close-btn" aria-label="닫기"><i data-lucide="x"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 실물 아이디 찾기 컴포넌트 -->
+                        <div class="find-id-box">
+                            <h4><i data-lucide="search-code" class="panel-icon text-primary"></i> 닉네임으로 이메일(아이디) 찾기</h4>
+                            <p class="panel-desc">가입 시 등록했던 닉네임을 입력하시면 마스킹된 이메일 주소를 조회합니다.</p>
+                            <form id="form-find-id" class="find-id-form">
+                                <div class="input-wrapper">
+                                    <i data-lucide="user" class="input-icon"></i>
+                                    <input type="text" id="find-nickname" required placeholder="닉네임 입력 (예: 도서관어드민)">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 0.75rem;">아이디 조회하기</button>
+                            </form>
+                            <div id="find-id-result" class="find-id-result hidden">
+                                <span>조회 결과 이메일:</span>
+                                <strong id="result-email-text"></strong>
+                            </div>
+                        </div>
+
+                        <hr class="modal-divider">
+
+                        <div class="guide-step">
+                            <span class="step-badge">!</span>
+                            <div>
+                                <h4>비밀번호를 분실했나요?</h4>
+                                <p>가입 시 등록했던 이메일로 비밀번호 재설정 링크를 요청할 수 있습니다.</p>
+                                <div class="code-example">
+                                    <code>await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btn-close-modal-confirm" class="btn btn-outline">닫기</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. 회원탈퇴 닉네임 2차 확인 안전 모달 -->
+            <div id="modal-delete-confirm" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h3 class="text-danger" style="display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="alert-triangle"></i> 회원 탈퇴 최종 확인</h3>
+                        <button id="btn-close-delete-modal" class="close-btn" aria-label="닫기"><i data-lucide="x"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="delete-warning-box">
+                            <p>회원 탈퇴 시 사용자의 모든 대여 이력과 프로필 정보가 데이터베이스에서 <strong>영구 삭제</strong>되며 복구할 수 없습니다.</p>
+                            <p class="text-danger-light" style="margin-top: 0.5rem; font-weight: 500;">안전한 탈퇴를 위해 본인의 닉네임을 아래에 똑같이 입력해 주십시오.</p>
+                        </div>
+                        <form id="form-delete-confirm" class="delete-confirm-form">
+                            <div class="delete-target-nickname-display">
+                                현재 내 닉네임: <strong id="delete-target-nickname" class="text-primary"></strong>
+                            </div>
+                            <div class="input-wrapper">
+                                <i data-lucide="key-round" class="input-icon"></i>
+                                <input type="text" id="delete-nickname-input" required placeholder="닉네임을 똑같이 입력하세요">
+                            </div>
+                            <button type="submit" id="btn-delete-account-final" class="btn btn-danger btn-block" style="margin-top: 1rem;" disabled>계정 영구 탈퇴</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btn-close-delete-modal-cancel" class="btn btn-outline">취소</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="main-footer">
+            <p>&copy; 2026 LibreFlow. Built with Supabase Auth & Vanilla JS.</p>
+        </footer>
+    </div>
+
+    <!-- 알림용 토스트 컨테이너 -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- JS 연결 (defer 및 버저닝 추가로 캐싱 방지) -->
+    <script src="app.js?v=3" defer></script>
+</body>
+</html>
