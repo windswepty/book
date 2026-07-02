@@ -930,6 +930,55 @@ if (formFindId) {
 }
 
 /* ==========================================
+   9-1. 비밀번호 변경 기능
+   ========================================== */
+// 대시보드에서 "비밀번호 변경하기" 버튼 클릭 시 비밀번호 변경 섹션으로 이동
+if (btnShowChangePw) {
+    btnShowChangePw.addEventListener("click", () => {
+        navigateTo("sec-change-password");
+    });
+}
+
+// 비밀번호 변경 폼 제출 처리
+if (formChangePw) {
+    formChangePw.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newPassword = document.getElementById("change-password").value;
+        const newPasswordConfirm = document.getElementById("change-password-confirm").value;
+
+        if (newPassword !== newPasswordConfirm) {
+            showToast("새 비밀번호가 일치하지 않습니다.", "error");
+            return;
+        }
+        if (newPassword.length < 6) {
+            showToast("비밀번호는 최소 6자리 이상이어야 합니다.", "error");
+            return;
+        }
+
+        try {
+            if (isOfflineMode) {
+                showToast("비밀번호가 성공적으로 변경되었습니다!", "success");
+                formChangePw.reset();
+                navigateTo("sec-dashboard");
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+            if (error) throw error;
+
+            showToast("비밀번호가 성공적으로 변경되었습니다!", "success");
+            formChangePw.reset();
+            navigateTo("sec-dashboard");
+        } catch (error) {
+            console.error("비밀번호 변경 에러:", error);
+            showToast(error.message || "비밀번호 변경에 실패했습니다.", "error");
+        }
+    });
+}
+
+/* ==========================================
    10. 모달 & 테마 토글 및 공통 인터랙션
    ========================================== */
 btnForgotPwGuide.addEventListener("click", () => {

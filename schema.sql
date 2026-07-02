@@ -267,3 +267,40 @@ BEGIN
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ================================================
+-- 닉네임으로 마스킹 이메일 조회 RPC 함수
+-- ================================================
+CREATE OR REPLACE FUNCTION public.get_email_by_nickname(p_nickname TEXT)
+RETURNS TEXT
+AS $$
+DECLARE
+    v_email TEXT;
+    v_local TEXT;
+    v_domain TEXT;
+    v_masked TEXT;
+BEGIN
+    -- profiles 테이블에서 닉네임으로 사용자 ID를 찾고, auth.users에서 이메일 조회
+    SELECT au.email INTO v_email
+    FROM public.profiles p
+    JOIN auth.users au ON au.id = p.id
+    WHERE p.nickname = p_nickname
+    LIMIT 1;
+
+    IF v_email IS NULL THEN
+        RAISE EXCEPTION '해당 닉네임으로 가입된 정보를 찾을 수 없습니다.';
+    END IF;
+
+    -- 이메일 마스킹: 앞 2자만 보여주고 나머지는 ***
+    v_local := SPLIT_PART(v_email, '@', 1);
+    v_domain := SPLIT_PART(v_email, '@', 2);
+
+    IF LENGTH(v_local) <= 2 THEN
+        v_masked := v_local || '***@' || v_domain;
+    ELSE
+        v_masked := LEFT(v_local, 2) || '***@' || v_domain;
+    END IF;
+
+    RETURN v_masked;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
