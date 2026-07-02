@@ -304,3 +304,18 @@ BEGIN
     RETURN v_masked;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ==========================================
+-- 8. 회원탈퇴 RPC (delete_user_account)
+-- ==========================================
+CREATE OR REPLACE FUNCTION public.delete_user_account()
+RETURNS void AS $$
+BEGIN
+    IF auth.uid() IS NULL THEN
+        RAISE EXCEPTION '로그인이 필요합니다.';
+    END IF;
+
+    -- auth.users 테이블에서 해당 사용자 삭제 (관련 데이터는 ON DELETE CASCADE로 삭제됨)
+    DELETE FROM auth.users WHERE id = auth.uid();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
