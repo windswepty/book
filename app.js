@@ -164,6 +164,30 @@ if (formRegister) {
             return;
         }
         
+        // 닉네임 중복 사전 차단 검사 (Supabase API 500 가림 방지)
+        if (!isOfflineMode && supabaseClient) {
+            try {
+                const { data: existingProfiles, error: checkError } = await supabaseClient
+                    .from("profiles")
+                    .select("id")
+                    .eq("nickname", nickname);
+                
+                if (checkError) throw checkError;
+                
+                if (existingProfiles && existingProfiles.length > 0) {
+                    showToast("이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해 주세요.", "error");
+                    return;
+                }
+            } catch (err) {
+                console.log("닉네임 중복 체크 우회 폴백:", err);
+            }
+        } else if (isOfflineMode) {
+            if (nickname === "도서관어드민" || nickname === "일반회원" || nickname === "성공적탈퇴") {
+                showToast("이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해 주세요.", "error");
+                return;
+            }
+        }
+        
         try {
             const { data, error } = await supabaseClient.auth.signUp({
                 email: email,
