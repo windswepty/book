@@ -185,8 +185,24 @@ if (formRegister) {
             }
             formRegister.reset();
         } catch (error) {
-            // 트리거단 중복 예외 메시지를 그대로 친절하게 Toast로 출력
-            showToast(error.message || "회원가입 실패", "error");
+            console.error("회원가입 처리 에러:", error);
+            let errMsg = "회원가입 실패";
+            if (error) {
+                if (typeof error === 'string') {
+                    errMsg = error;
+                } else if (error.message) {
+                    errMsg = error.message;
+                } else if (error.error_description) {
+                    errMsg = error.error_description;
+                } else {
+                    try {
+                        errMsg = JSON.stringify(error);
+                    } catch(e) {
+                        errMsg = "회원가입 실패 (상세 에러)";
+                    }
+                }
+            }
+            showToast(errMsg, "error");
         }
     });
 }
