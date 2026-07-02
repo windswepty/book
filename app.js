@@ -813,7 +813,10 @@ function handleAuthChange(event, session) {
         }
         
         const activeSection = Object.keys(sections).find(key => !sections[key].classList.contains("hidden"));
-        if (activeSection !== "changePassword") {
+        if (event === "PASSWORD_RECOVERY") {
+            showToast("비밀번호 재설정을 위해 새 비밀번호를 입력해주세요.", "info");
+            navigateTo("sec-change-password");
+        } else if (activeSection !== "changePassword") {
             navigateTo("sec-dashboard");
         }
     } else {
