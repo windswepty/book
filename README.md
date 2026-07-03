@@ -61,11 +61,6 @@ LibreFlow는 복잡한 백엔드 서버 구축 없이 **Supabase**의 강력한 
 
 🔗 **서비스 바로가기**: [https://windswepty.github.io/book/](https://windswepty.github.io/book/)
 
-> **[테스트 계정 안내]**
-> 직접 회원가입을 하셔도 되며, 빠르게 기능을 둘러보고 싶으신 경우 아래의 테스트 계정을 사용해 주세요.
-> - **이메일 (또는 아이디)**: `tester01@library.com` (아이디: `tester01`)
-> - **비밀번호**: `password123`
-
 ---
 
 ## 💡 개발 포인트 (회고)
