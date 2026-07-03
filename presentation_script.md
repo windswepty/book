@@ -3,7 +3,8 @@
 > **[발표 팁]**
 > 천천히, 한 줄 한 줄 여유를 가지면서 읽어주세요.
 > 시연 파트(3번)에서만 화면을 조작하시면 됩니다.
-> **[테스트 계정]** 아이디: `tester01` / 이메일: `tester01@library.com` / 비번: `password123`
+> **[테스트 계정 1]** 아이디: `tester01` / 이메일: `tester01@library.com` / 비번: `password123`
+> **[테스트 계정 2]** 아이디: `tester02` / 이메일: `tester02@library.com` / 비번: `password123`
 
 ---
 
