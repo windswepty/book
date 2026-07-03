@@ -55,20 +55,16 @@ LibreFlow는 복잡한 백엔드 서버 구축 없이 **Supabase**의 강력한 
 
 ---
 
-## 💻 실행 방법 (로컬 테스트)
+## 💻 접속 및 실행 방법
 
-본 프로젝트는 순수 HTML/JS 파일로 구성되어 있어 브라우저에서 바로 열거나 로컬 웹 서버를 띄워 확인할 수 있습니다.
+본 프로젝트는 GitHub Pages를 통해 배포되어 있어, 별도의 설치나 로컬 서버 구동 없이 아래 링크를 통해 바로 접속 및 테스트가 가능합니다.
 
-**방법 1: Live Server / HTTP Server 이용**
-VSCode의 Live Server 확장을 사용하거나 파이썬/노드 HTTP 서버를 띄워서 `index.html`에 접속합니다.
-```bash
-npx serve .
-```
+🔗 **서비스 바로가기**: [https://windswepty.github.io/book/](https://windswepty.github.io/book/)
 
-> **오프라인 디버그 모드 안내**
-> Supabase 연결 없이 UI와 로직을 테스트해보고 싶다면 로그인 창에서 아래 계정을 입력하세요.
-> - **일반 유저 모드**: `member@library.com` / `password123`
-> - **관리자 모드**: `admin@library.com` / `password123`
+> **[테스트 계정 안내]**
+> 직접 회원가입을 하셔도 되며, 빠르게 기능을 둘러보고 싶으신 경우 아래의 테스트 계정을 사용해 주세요.
+> - **이메일 (또는 아이디)**: `tester01@library.com` (아이디: `tester01`)
+> - **비밀번호**: `password123`
 
 ---
 
