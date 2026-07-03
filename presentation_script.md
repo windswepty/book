@@ -5,6 +5,7 @@
 > 시연 파트(3번)에서만 화면을 조작하시면 됩니다.
 > **[테스트 계정 1]** 아이디: `tester01` / 이메일: `tester01@library.com` / 비번: `password123`
 > **[테스트 계정 2]** 아이디: `tester02` / 이메일: `tester02@library.com` / 비번: `password123`
+> **[관리자 계정]** 아이디: `admin` / 이메일: `admin@library.com` / 비번: `password123`
 
 ---
 
