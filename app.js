@@ -317,34 +317,7 @@ async function handleLogout() {
 }
 btnLogoutHeader.addEventListener("click", handleLogout);
 
-// 5-4. 비밀번호 변경
-if (formChangePw) {
-    formChangePw.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const newPassword = document.getElementById("change-password").value;
-        const confirmPassword = document.getElementById("change-password-confirm").value;
-        
-        if (newPassword !== confirmPassword) {
-            showToast("비밀번호가 일치하지 않습니다.", "error");
-            return;
-        }
-        if (isOfflineMode) {
-            showToast("비밀번호가 성공적으로 변경되었습니다. (오프라인 완료)", "success");
-            navigateTo("sec-dashboard");
-            return;
-        }
-        try {
-            const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
-            if (error) throw error;
-            showToast("비밀번호가 안전하게 변경되었습니다.", "success");
-            formChangePw.reset();
-            navigateTo("sec-dashboard");
-        } catch (error) {
-            showToast(error.message || "비밀번호 변경 실패", "error");
-        }
-    });
-}
-btnShowChangePw.addEventListener("click", () => navigateTo("sec-change-password"));
+
 
 // 5-5. 회원탈퇴 (1단계: 안전 확인 모달 팝업 띄우기)
 btnDeleteAccount.addEventListener("click", () => {
